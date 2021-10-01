@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import baseball.code.BallCount;
 import baseball.model.Ball.BallBuilder;
+import nextstep.utils.Randoms;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -132,5 +133,21 @@ class BallTest {
 
     // then
     assertThat(ballCount).isEqualTo(BallCount.BALL);
+  }
+
+  @DisplayName("Ball Randoms 생성 테스트")
+  @Test
+  void createBallUsingRandoms(){
+    // given
+    int randomNumber = Randoms.pickNumberInRange(1,9);
+
+    // when
+    Ball ball = new BallBuilder()
+        .number(randomNumber)
+        .build();
+    ball.isBetweenNumberRange();
+
+    // then
+    assertThat(ball.getNumber()).isEqualTo(randomNumber);
   }
 }

@@ -47,6 +47,9 @@ class BallsTest {
     assertThat(ballArray).hasSize(3);
     assertThat(ballArray[0]).isInstanceOf(Ball.class);
     assertThat(ballArray[0].compareBall(ballArray[0])).isEqualTo(BallCount.STRIKE);
+    assertThat(ballArray[0].getNumber()).isNotEqualTo(ballArray[1].getNumber());
+    assertThat(ballArray[0].getNumber()).isNotEqualTo(ballArray[2].getNumber());
+    assertThat(ballArray[1].getNumber()).isNotEqualTo(ballArray[2].getNumber());
   }
 
 }

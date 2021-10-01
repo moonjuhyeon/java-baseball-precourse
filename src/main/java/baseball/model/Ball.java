@@ -26,7 +26,7 @@ public class Ball {
   }
 
   public BallCount compareBall(Ball ball) {
-    if(this.index==ball.index && this.number==ball.index){
+    if(this.index==ball.index && this.number==ball.number){
       return BallCount.STRIKE;
     }
 
