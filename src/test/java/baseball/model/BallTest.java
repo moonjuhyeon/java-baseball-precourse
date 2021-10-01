@@ -3,6 +3,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import baseball.code.BallCount;
+import baseball.code.ErrorCode;
 import baseball.model.Ball.BallBuilder;
 import nextstep.utils.Randoms;
 import org.junit.jupiter.api.DisplayName;
@@ -44,26 +45,30 @@ class BallTest {
   @DisplayName("BallNumber 1-9 숫자 범위 유효성 예외처리 테스트")
   @ParameterizedTest
   @ValueSource(ints = { 0, 10, -1, 100, Integer.MAX_VALUE, Integer.MIN_VALUE })
-  void validationBetweenBallNumberRangeThrowException(int number) {
-    // given // when
-    Ball ball = new BallBuilder()
-        .number(number)
-        .build();
+  void validationBetweenBallNumberRangeThrowException(int number){
 
-    // then
-    assertThatThrownBy(ball::isBetweenNumberRange)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("1-9까지의 숫자를 입력하세요.");
+    assertThatThrownBy(()->{
+      // given // when
+      Ball ball = new BallBuilder()
+          .number(number)
+          .index(0)
+          .build();
+      // then
+    }).isInstanceOf(RuntimeException.class)
+    .hasMessageContaining(ErrorCode.INVALID_BALL_NUMBER_RANGE.getMessage());
   }
 
   @DisplayName("BallNumber 1-9 숫자 범위 유효성 테스트")
   @ParameterizedTest
   @ValueSource(ints = { 1, 2, 3, 4, 5, 6, 7 ,8, 9 })
   void validationBetweenBallNumberRange(int number) {
-    // given // when
+    // given
     Ball ball = new BallBuilder()
         .number(number)
+        .index(0)
         .build();
+    // when
+    ball.isBetweenNumberRange();
 
     // then
     assertThat(ball.getNumber()).isBetween(1, 9);
@@ -73,28 +78,34 @@ class BallTest {
   @ParameterizedTest
   @ValueSource(ints = { 3, -1, 100, Integer.MAX_VALUE, Integer.MIN_VALUE })
   void validationBetweenBallIndexRangeThrowException(int index) {
-    // given // when
-    Ball ball = new BallBuilder()
-        .index(index)
-        .build();
 
-    // then
-    assertThatThrownBy(ball::isBetweenIndexRange)
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining("최대 세 자리 수까지 입력가능합니다.");
+    assertThatThrownBy(
+        ()-> {
+          // given // when
+          Ball ball = new BallBuilder()
+              .index(index)
+              .number(1)
+              .build();
+          // then
+        }).isInstanceOf(RuntimeException.class)
+        .hasMessageContaining(ErrorCode.INVALID_BALL_INDEX_RANGE.getMessage());
   }
 
   @DisplayName("BallIndex 0-2 인덱스 범위 유효성 테스트")
   @ParameterizedTest
   @ValueSource(ints = { 0, 1, 2 })
   void validationBetweenBallIndexRange(int index) {
-    // given // when
+    // given
     Ball ball = new BallBuilder()
         .index(index)
+        .number(1)
         .build();
 
+    // when
+    ball.isBetweenIndexRange();
+
     // then
-    assertThat(ball.getNumber()).isBetween(0, 2);
+    assertThat(ball.getIndex()).isBetween(0, 2);
   }
 
   @DisplayName("같은 자리, 같은 숫자일 때 BallCount STRIKE 반환 테스트")
@@ -102,11 +113,11 @@ class BallTest {
   void compareBallReturnStrike(){
     // given
     Ball ballA = new BallBuilder()
-        .number(0)
+        .number(1)
         .index(0)
         .build();
     Ball ballB = new BallBuilder()
-        .number(0)
+        .number(1)
         .index(0)
         .build();
     // when
@@ -121,11 +132,11 @@ class BallTest {
   void compareBallReturnBall(){
     // given
     Ball ballA = new BallBuilder()
-        .number(0)
+        .number(1)
         .index(0)
         .build();
     Ball ballB = new BallBuilder()
-        .number(0)
+        .number(1)
         .index(1)
         .build();
     // when

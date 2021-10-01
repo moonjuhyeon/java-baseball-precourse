@@ -1,5 +1,7 @@
 package baseball.model;
 import baseball.code.BallCount;
+import baseball.code.ErrorCode;
+import baseball.exception.BallException;
 
 public class Ball {
   private int number;
@@ -15,13 +17,13 @@ public class Ball {
 
   public void isBetweenNumberRange() {
     if(this.number>9 || this.number<1){
-      throw new IllegalArgumentException("1-9까지의 숫자를 입력하세요.");
+      throw new BallException(ErrorCode.INVALID_BALL_NUMBER_RANGE.getMessage());
     }
   }
 
   public void isBetweenIndexRange() {
-    if(this.index>=0 || this.index<3){
-      throw new IllegalArgumentException("최대 세 자리 수까지 입력가능합니다.");
+    if(this.index<0 || this.index>2){
+      throw new BallException(ErrorCode.INVALID_BALL_INDEX_RANGE.getMessage());
     }
   }
 
@@ -59,7 +61,10 @@ public class Ball {
     }
 
     public Ball build(){
-      return new Ball(this);
+      Ball ball = new Ball(this);
+      ball.isBetweenIndexRange();
+      ball.isBetweenNumberRange();
+      return ball;
     }
   }
 }
