@@ -1,72 +1,121 @@
 package baseball.model;
 
-import baseball.model.Ball.BallBuilder;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import baseball.code.BallCount;
+import baseball.code.BallValueRange;
+import baseball.code.ErrorCode;
+import baseball.exception.BallException;
+import baseball.model.Ball.BallBuilder;
 import nextstep.utils.Randoms;
 
 public class Balls {
-  private final static int MIN_NUMBER_RANGE = 1;
-  private final static int MAX_NUMBER_RANGE = 9;
-  private final static int MAX_INDEX_RANGE = 2;
+	private List<BallCount> ballCountList = new ArrayList<>();
+	private List<Ball> ballList;
 
-  private Ball[] ballArray;
+	public Balls() {
 
-  public Ball[] getBallArray() {
-    return ballArray;
-  }
+	}
 
-  public Balls(){
+	public Balls(BallsBuilder ballsBuilder) {
+		this.ballList = ballsBuilder.ballList;
+	}
 
-  }
+	public Balls(BallsRandomsBuilder ballsRandomsBuilder) {
+		this.ballList = ballsRandomsBuilder.ballList;
+	}
 
-  public Balls(BallsBuilder ballsBuilder){
-    this.ballArray = ballsBuilder.ballArray;
-  }
+	public List<Ball> getBallList() {
+		return ballList;
+	}
 
-  public Balls(BallsRandomsBuilder ballsRandomsBuilder) {
-    this.ballArray = ballsRandomsBuilder.ballArray;
-  }
+	public List<BallCount> compareBalls(Balls playerBalls) {
+		for (int i = BallValueRange.MIN_INDEX_RANGE.getValue(); i <= BallValueRange.MAX_INDEX_RANGE.getValue(); i++) {
+			rotateCompareBalls(i, playerBalls);
+		}
+		return this.ballCountList;
+	}
 
-  public static class BallsBuilder {
-    private Ball[] ballArray;
+	private void rotateCompareBalls(int i, Balls playerBalls) {
+		for (int j = BallValueRange.MIN_INDEX_RANGE.getValue();
+			 j <= BallValueRange.MAX_INDEX_RANGE.getValue(); j++) {
+			this.ballCountList.add(this.ballList.get(i).compareBall(playerBalls.getBallList().get(j)));
+		}
+	}
 
-    public BallsBuilder ballArray(Ball[] ballArray){
-      this.ballArray = ballArray;
-      return this;
-    }
+	public static class BallsBuilder {
+		private List<Ball> ballList;
 
+		public BallsBuilder ballArray(String input) {
+			this.ballList = createBallList(checkBlank(input));
+			return this;
+		}
 
-    public Balls build(){
-      return new Balls(this);
-    }
-  }
+		private String checkBlank(String input) {
+			if (input.equals("")) {
+				throw new NullPointerException();
+			}
+			return input;
+		}
 
-  public static class BallsRandomsBuilder {
-    private Ball[] ballArray;
+		private List<Ball> createBallList(String input) {
+			List<Ball> ballList = new ArrayList<>();
+			int i = 0;
+			for (char number : checkDupNumbers(input).toCharArray()) {
+				ballList.add(createBall(Character.getNumericValue(number), i));
+				i++;
+			}
+			return ballList;
+		}
 
-    private Set<Integer> createNumberSetUsingRandoms(){
-      Set<Integer> randomsNumberSet = new HashSet<>();
+		private String checkDupNumbers(String input) {
+			Set<Integer> integerSet = new HashSet<>();
+			for (char s : input.toCharArray()) {
+				integerSet.add(Character.getNumericValue(s));
+			}
+			if (integerSet.size() <= BallValueRange.MAX_INDEX_RANGE.getValue()) {
+				throw new BallException(ErrorCode.INVALID_BALL_INDEX_RANGE.getMessage());
+			}
+			return input;
+		}
 
-      while(randomsNumberSet.size()<=MAX_INDEX_RANGE){
-        randomsNumberSet.add(Randoms.pickNumberInRange(MIN_NUMBER_RANGE, MAX_NUMBER_RANGE));
-      }
-      return randomsNumberSet;
-    }
+		private Ball createBall(int number, int index) {
+			return new BallBuilder().number(number).index(index).build();
+		}
 
-    private void createBallArrayUsingRandoms(){
-      ballArray = new Ball[MAX_INDEX_RANGE+1];
-      int i = 0;
-      for(int number : createNumberSetUsingRandoms()){
-        ballArray[i] = new BallBuilder().index(i).number(number).build();
-        i++;
-      }
-    }
+		public Balls build() {
+			return new Balls(this);
+		}
+	}
 
-    public Balls build(){
-      createBallArrayUsingRandoms();
-      return new Balls(this);
-    }
+	public static class BallsRandomsBuilder {
+		private List<Ball> ballList;
 
-  }
+		private Set<Integer> createNumberSetUsingRandoms() {
+			Set<Integer> randomsNumberSet = new HashSet<>();
+			while (randomsNumberSet.size() <= BallValueRange.MAX_INDEX_RANGE.getValue()) {
+				randomsNumberSet.add(
+					Randoms.pickNumberInRange(BallValueRange.MIN_NUMBER_RANGE.getValue()
+						, BallValueRange.MAX_NUMBER_RANGE.getValue()));
+			}
+			return randomsNumberSet;
+		}
+
+		private void createBallArrayUsingRandoms() {
+			ballList = new ArrayList<>(BallValueRange.MAX_INDEX_RANGE.getValue() + 1);
+			int i = 0;
+			for (int number : createNumberSetUsingRandoms()) {
+				ballList.add(new BallBuilder().index(i).number(number).build());
+				i++;
+			}
+		}
+
+		public Balls build() {
+			createBallArrayUsingRandoms();
+			return new Balls(this);
+		}
+	}
 }
