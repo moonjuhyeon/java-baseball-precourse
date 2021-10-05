@@ -13,7 +13,7 @@ import baseball.model.Ball.BallBuilder;
 import nextstep.utils.Randoms;
 
 public class Balls {
-	private List<BallCount> ballCountList = new ArrayList<>();
+	private List<BallCount> ballCountList;
 	private List<Ball> ballList;
 
 	public Balls() {
@@ -33,6 +33,7 @@ public class Balls {
 	}
 
 	public List<BallCount> compareBalls(Balls playerBalls) {
+		ballCountList = new ArrayList<>();
 		for (int i = BallValueRange.MIN_INDEX_RANGE.getValue(); i <= BallValueRange.MAX_INDEX_RANGE.getValue(); i++) {
 			rotateCompareBalls(i, playerBalls);
 		}
@@ -50,13 +51,16 @@ public class Balls {
 		private List<Ball> ballList;
 
 		public BallsBuilder ballArray(String input) {
-			this.ballList = createBallList(checkBlank(input));
+			this.ballList = createBallList(checkNumericAndBlank(input));
 			return this;
 		}
 
-		private String checkBlank(String input) {
+		private String checkNumericAndBlank(String input) {
+			if (!input.matches("[0-9]+")) {
+				throw new BallException(ErrorCode.INVALID_INPUT_VALUE.getMessage());
+			}
 			if (input.equals("")) {
-				throw new NullPointerException();
+				throw new BallException(ErrorCode.INVALID_INPUT_VALUE.getMessage());
 			}
 			return input;
 		}
@@ -94,20 +98,29 @@ public class Balls {
 	public static class BallsRandomsBuilder {
 		private List<Ball> ballList;
 
-		private Set<Integer> createNumberSetUsingRandoms() {
-			Set<Integer> randomsNumberSet = new HashSet<>();
-			while (randomsNumberSet.size() <= BallValueRange.MAX_INDEX_RANGE.getValue()) {
-				randomsNumberSet.add(
-					Randoms.pickNumberInRange(BallValueRange.MIN_NUMBER_RANGE.getValue()
-						, BallValueRange.MAX_NUMBER_RANGE.getValue()));
+		private List<Integer> createNumberListUsingRandoms() {
+			List<Integer> randomsNumberList = new ArrayList<>();
+			while (randomsNumberList.size() <= BallValueRange.MAX_INDEX_RANGE.getValue()) {
+				checkDuplicateNumber(randomsNumberList, createRandomNumber());
 			}
-			return randomsNumberSet;
+			return randomsNumberList;
+		}
+
+		private Integer createRandomNumber() {
+			return Randoms.pickNumberInRange(BallValueRange.MIN_NUMBER_RANGE.getValue()
+				, BallValueRange.MAX_NUMBER_RANGE.getValue());
+		}
+
+		private void checkDuplicateNumber(List<Integer> randomsNumberList, Integer randomNumber) {
+			if (!randomsNumberList.contains(randomNumber)) {
+				randomsNumberList.add(randomNumber);
+			}
 		}
 
 		private void createBallArrayUsingRandoms() {
 			ballList = new ArrayList<>(BallValueRange.MAX_INDEX_RANGE.getValue() + 1);
-			int i = 0;
-			for (int number : createNumberSetUsingRandoms()) {
+			int i = BallValueRange.MIN_INDEX_RANGE.getValue();
+			for (int number : createNumberListUsingRandoms()) {
 				ballList.add(new BallBuilder().index(i).number(number).build());
 				i++;
 			}
