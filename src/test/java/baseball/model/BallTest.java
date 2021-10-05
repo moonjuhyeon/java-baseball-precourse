@@ -13,7 +13,7 @@ import baseball.model.Ball.BallBuilder;
 import nextstep.utils.Randoms;
 
 @DisplayName("Ball 테스트")
-class BallTest {
+public class BallTest {
 
 	@DisplayName("Ball Java Bean 생성 테스트")
 	@Test

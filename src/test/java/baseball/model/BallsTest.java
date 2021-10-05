@@ -12,10 +12,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import baseball.code.BallCount;
 import baseball.code.ErrorCode;
+import baseball.exception.BallException;
 import baseball.model.Balls.BallsBuilder;
 
 @DisplayName("Balls 테스트")
-class BallsTest {
+public class BallsTest {
 
 	@DisplayName("Balls Java Bean 생성테스트")
 	@Test
@@ -69,7 +70,7 @@ class BallsTest {
 	void createPlayerBallsInputNull() {
 		assertThatThrownBy(() -> {
 			new BallsBuilder().ballArray("").build();
-		}).isInstanceOf(NullPointerException.class);
+		}).isInstanceOf(BallException.class);
 	}
 
 	@DisplayName("두 Balls를 비교하여 BallCountList를 만드는 함수 테스트")

@@ -31,7 +31,7 @@ public class Ball {
 			throw new BallException(ErrorCode.INVALID_BALL_NUMBER_RANGE.getMessage());
 		}
 		if (this.number == 0) {
-			throw new NullPointerException();
+			throw new BallException(ErrorCode.INVALID_INPUT_VALUE.getMessage());
 		}
 	}
 

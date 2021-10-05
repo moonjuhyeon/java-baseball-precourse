@@ -10,7 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class BallCountTest {
+@DisplayName("BallCount 테스트")
+public class BallCountTest {
 
 	private List<BallCount> ballCountList;
 
