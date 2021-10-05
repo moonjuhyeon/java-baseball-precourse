@@ -3,7 +3,6 @@ package baseball.view;
 import nextstep.utils.Console;
 
 public class PlayerInputView {
-
 	public static String inputNumbers() {
 		System.out.println("숫자를 입력해주세요 : ");
 		return Console.readLine();
