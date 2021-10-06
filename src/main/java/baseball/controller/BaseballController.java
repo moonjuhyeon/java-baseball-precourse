@@ -1,22 +1,21 @@
 package baseball.controller;
 
-import baseball.code.BallCount;
 import baseball.code.GameStatus;
 import baseball.exception.BallException;
 import baseball.model.Balls;
+import baseball.model.GameResult;
 import baseball.view.PlayerInputView;
 import baseball.view.PlayerOutputView;
 
 public class BaseballController {
-	public static String GAME_STATUS = GameStatus.START_GAME.getGameStatus();
+	private static GameResult gameResult;
 
 	public static void playBaseball() {
 		do {
 			Balls computerBalls = new Balls.BallsRandomsBuilder().build();
 			resultOfBaseball(computerBalls);
 			PlayerOutputView.printThisGameEnd();
-			GAME_STATUS = validGameStatusInput();
-		} while (!GAME_STATUS.equals(GameStatus.END_GAME.getGameStatus()));
+		} while (GameStatus.isRestart(validGameStatusInput()));
 	}
 
 	public static String validGameStatusInput() {
@@ -29,12 +28,12 @@ public class BaseballController {
 	}
 
 	public static void resultOfBaseball(Balls computerBalls) {
-		String result;
 		do {
 			Balls playerBalls = createPlayerBalls();
-			result = BallCount.convertBallCountListToString(computerBalls.compareBalls(playerBalls));
-			PlayerOutputView.printResultOutput(result);
-		} while (!GameStatus.END_RESULT.getGameStatus().equals(result));
+			gameResult = new GameResult
+				.GameResultBuilder().compareBalls(computerBalls, playerBalls).build();
+			PlayerOutputView.printResultOutput(gameResult.getGameResultString());
+		} while (gameResult.isLoose());
 	}
 
 	public static Balls createPlayerBalls() {

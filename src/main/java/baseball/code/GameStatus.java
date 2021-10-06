@@ -20,6 +20,10 @@ public enum GameStatus {
 		return input;
 	}
 
+	public static boolean isRestart(String gameStatus) {
+		return gameStatus.equals(START_GAME.gameStatus);
+	}
+
 	public String getGameStatus() {
 		return this.gameStatus;
 	}

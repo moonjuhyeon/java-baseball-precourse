@@ -1,6 +1,7 @@
 package baseball.model;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,10 @@ public class BallTest {
 		// given // when
 		Ball ball = new Ball();
 		// then
-		assertThat(ball).isInstanceOf(Ball.class);
-		assertThat(ball.getNumber()).isInstanceOf(Integer.class);
+		assertAll(
+			() -> assertThat(ball).isInstanceOf(Ball.class),
+			() -> assertThat(ball.getNumber()).isInstanceOf(Integer.class)
+		);
 	}
 
 	@DisplayName("Ball Builder 생성 테스트")
@@ -31,15 +34,17 @@ public class BallTest {
 		// given // when
 		Ball ball = new Ball.BallBuilder().number(1).index(1).build();
 		// then
-		assertThat(ball).isInstanceOf(Ball.class);
-		assertThat(ball.getNumber()).isInstanceOf(Integer.class);
-		assertThat(ball.getNumber()).isEqualTo(1);
-		assertThat(ball.getIndex()).isInstanceOf(Integer.class);
-		assertThat(ball.getIndex()).isEqualTo(1);
+		assertAll(
+			() -> assertThat(ball).isInstanceOf(Ball.class),
+			() -> assertThat(ball.getNumber()).isInstanceOf(Integer.class),
+			() -> assertThat(ball.getNumber()).isEqualTo(1),
+			() -> assertThat(ball.getIndex()).isInstanceOf(Integer.class),
+			() -> assertThat(ball.getIndex()).isEqualTo(1)
+		);
 	}
 
 	@DisplayName("BallNumber 1-9 숫자 범위 유효성 예외처리 테스트")
-	@ParameterizedTest
+	@ParameterizedTest(name = "{index} ==> number {0}")
 	@ValueSource(ints = {0, 10, -1, 100, Integer.MAX_VALUE, Integer.MIN_VALUE})
 	void validationBetweenBallNumberRangeThrowException(int number) {
 		assertThatThrownBy(() -> {
@@ -51,7 +56,7 @@ public class BallTest {
 	}
 
 	@DisplayName("BallNumber 1-9 숫자 범위 유효성 테스트")
-	@ParameterizedTest
+	@ParameterizedTest(name = "{index} ==> number {0}")
 	@ValueSource(ints = {1, 2, 3, 4, 5, 6, 7, 8, 9})
 	void validationBetweenBallNumberRange(int number) {
 		// given
@@ -63,7 +68,7 @@ public class BallTest {
 	}
 
 	@DisplayName("BallIndex 0-2 인덱스 범위 유효성 예외처리 테스트")
-	@ParameterizedTest
+	@ParameterizedTest(name = "{index} ==> index {0}")
 	@ValueSource(ints = {3, -1, 100, Integer.MAX_VALUE, Integer.MIN_VALUE})
 	void validationBetweenBallIndexRangeThrowException(int index) {
 		assertThatThrownBy(
@@ -74,7 +79,7 @@ public class BallTest {
 	}
 
 	@DisplayName("BallIndex 0-2 인덱스 범위 유효성 테스트")
-	@ParameterizedTest
+	@ParameterizedTest(name = "{index} ==> index {0}")
 	@ValueSource(ints = {0, 1, 2})
 	void validationBetweenBallIndexRange(int index) {
 		// given

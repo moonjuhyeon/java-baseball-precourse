@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("PlayerInputVest 테스트")
 public class PlayerInputViewTest {
 
-	@DisplayName("InputNumber 테스")
+	@DisplayName("InputNumber 테스트")
 	@Test
 	void inputNumberTest() {
 		// given
