@@ -15,8 +15,17 @@ public class BaseballController {
 			Balls computerBalls = new Balls.BallsRandomsBuilder().build();
 			resultOfBaseball(computerBalls);
 			PlayerOutputView.printThisGameEnd();
-			GAME_STATUS = PlayerInputView.inputGameStatus();
-		} while (GAME_STATUS.equals(GameStatus.START_GAME.getGameStatus()));
+			GAME_STATUS = validGameStatusInput();
+		} while (!GAME_STATUS.equals(GameStatus.END_GAME.getGameStatus()));
+	}
+
+	public static String validGameStatusInput() {
+		try {
+			return GameStatus.validInputGameStatus(PlayerInputView.inputGameStatus());
+		} catch (BallException ballException) {
+			PlayerOutputView.printError(ballException);
+			return validGameStatusInput();
+		}
 	}
 
 	public static void resultOfBaseball(Balls computerBalls) {
